@@ -1,0 +1,45 @@
+{{- if .Values.ingress.enabled -}}
+{{- $serviceName := include "ui-fullname" . -}}
+{{- $servicePort := .Values.Ui.externalPort -}}
+{{- $host2 := .Values.Engine.host -}}
+{{- $service2Name := include "engine-fullname" . -}}
+{{- $service2Port := .Values.Engine.externalPort -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "ui-fullname" . }}
+  labels:
+    app: {{ template "ui-fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  backend:
+    serviceName: {{ $serviceName }}
+    servicePort: {{ $servicePort }}
+  rules:
+    - host: $host2
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $service2Name }}
+              servicePort: {{ $service2Port }} 
+    {{- range $host := .Values.ingress.hosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+    {{- end -}}
+  {{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+  {{- end -}}
+{{- end -}}

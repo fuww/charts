@@ -1,0 +1,63 @@
+# Default values for kadira.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+Engine:
+  name: engine
+  image: "fuww/kadira-engine"
+  imageTag: "latest"
+  component: "kadira-engine"
+  # mongoUrl:
+  # mongoShardUrl:
+  replicas: 1
+  containerPort: 11011
+  externalPort: 11011
+  type: NodePort
+  host2: engine-kadira.example.com
+
+Rma:
+  name: rma
+  image: "dkoo761/kadira-rma"
+  imageTag: "latest"
+  component: "kadira-rma"
+  # mongoUrl:
+  replicas: 1
+
+Ui:
+  name: ui
+  image: "vladgolubev/kadira-ui"
+  imageTag: "latest"
+  replicas: 1
+  component: "kadira-ui"
+  # mongoUrl: 
+  # mongoShardUrl:
+  containerPort: 4000
+  externalPort: 4000
+  type: NodePort
+  #type: LoadBalancer
+  # Mind you, without capital!
+
+ingress:
+  enabled: true
+  # Used to create Ingress record (should used with service.type: ClusterIP).
+  hosts:
+    - kadira.example.com
+    # The second host for the engine, engine-kadira.example.com is in the ingress for now since it needs different ports.
+  hostname: kadira.example.com
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  tls:
+    # Secrets must be manually created in the namespace.
+     - secretName: chart-kadira-tls # we use 1 certificate for both hostnames
+       hosts:
+         - kadira.example.com
+         - engine-kadira.example.com
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+

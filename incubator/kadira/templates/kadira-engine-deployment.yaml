@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "engine-fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Engine.component }}"
+spec:
+  ports:
+  - name: "{{ .Values.Engine.externalPort }}"
+    port: {{ .Values.Engine.externalPort }}
+    targetPort: {{ .Values.Engine.containerPort }}
+  selector:
+    component: "{{ .Release.Name }}-{{ .Values.Engine.component }}"
+  type: "{{ .Values.Engine.type }}"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "engine-fullname" . }}
+  creationTimestamp: null
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Engine.component }}"
+  
+spec:
+  replicas: {{ default 1 .Values.Engine.replicas }}
+  strategy: 
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      component: "{{ .Release.Name }}-{{ .Values.Engine.component }}"
+  template:
+    metadata:
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.Engine.component }}"
+    spec:
+      containers:
+      - env:
+        - name: MONGO_SHARD_URL_one
+          value: {{ default "" .Values.Engine.mongoShardUrl | quote }}
+        - name: MONGO_URL
+          value: {{ default "" .Values.Engine.mongoUrl | quote }}
+        - name: PORT
+          value: "{{ .Values.Engine.containerPort }}"
+        image: "{{ .Values.Engine.Image }}:{{ .Values.Engine.imageTag }}"
+        name: {{ template "engine-fullname" . }}
+        ports:
+        - containerPort: {{ .Values.Engine.containerPort }}
+        resources: {}
+      restartPolicy: Always

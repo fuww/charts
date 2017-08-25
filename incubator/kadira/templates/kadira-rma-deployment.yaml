@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Rma.component }}"
+  name: {{ template "rma-fullname" . }}
+spec:
+  clusterIP: None
+  ports:
+  - name: headless
+    port: 55555
+    targetPort: 0
+  selector:
+      component: "{{ .Release.Name }}-{{ .Values.Rma.component }}"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    component: "{{ .Release.Name }}-{{ .Values.Rma.component }}"
+  name: {{ template "rma-fullname" . }}
+spec:
+  replicas: {{ default 1 .Values.Rma.replicas }}
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        heritage: {{ .Release.Service | quote }}
+        release: {{ .Release.Name | quote }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        component: "{{ .Release.Name }}-{{ .Values.Rma.component }}"
+    spec:
+      containers:
+      - env:
+        - name: MONGO_URL
+          value: {{ default "" .Values.Rma.mongoUrl | quote }}
+        image: "{{ .Values.Rma.Image }}:{{ .Values.Rma.imageTag }}"
+        name: {{ template "rma-fullname" . }}
+        resources: {}
+      restartPolicy: Always

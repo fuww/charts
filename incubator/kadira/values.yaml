@@ -13,11 +13,11 @@ Engine:
   containerPort: 11011
   externalPort: 11011
   type: NodePort
-  host2: engine-kadira.example.com
+  host: engine-kadira.example.com
 
 Rma:
   name: rma
-  image: "dkoo761/kadira-rma"
+  image: "fuww/kadira-rma"
   imageTag: "latest"
   component: "kadira-rma"
   # mongoUrl:
@@ -34,8 +34,6 @@ Ui:
   containerPort: 4000
   externalPort: 4000
   type: NodePort
-  #type: LoadBalancer
-  # Mind you, without capital!
 
 ingress:
   enabled: true

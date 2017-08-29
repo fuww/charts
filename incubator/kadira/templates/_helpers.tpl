@@ -12,16 +12,16 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 */}}
 
 {{- define "ui-fullname" -}}
-{{- $name := default .Chart.Name .Values.Ui.Name -}}
+{{- $name := default .Chart.Name .Values.Ui.name -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 24 -}}
 {{- end -}}
 
 {{- define "rma-fullname" -}}
-{{- $name := default .Chart.Name .Values.Rma.Name -}}
+{{- $name := default .Chart.Name .Values.Rma.name -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 24 -}}
 {{- end -}}
 
 {{- define "engine-fullname" -}}
-{{- $name := default .Chart.Name .Values.Engine.Name -}}
+{{- $name := default .Chart.Name .Values.Engine.name -}}
 {{- printf "%s-%s" .Release.Name $name | trunc 24 -}}
 {{- end -}}

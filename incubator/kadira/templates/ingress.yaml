@@ -22,7 +22,7 @@ spec:
     serviceName: {{ $serviceName }}
     servicePort: {{ $servicePort }}
   rules:
-    - host: $host2
+    - host: {{ $host2 }}
       http:
         paths:
           - path: /

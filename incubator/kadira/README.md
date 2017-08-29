@@ -1,5 +1,5 @@
 ```shell
-helm install --name my-release kadira
+helm install --name my-release incubator/kadira
 
 helm delete my-release
 
@@ -8,7 +8,7 @@ or the brute-force way:
 helm del --purge my-release 
 
 Create cert on Cloudflare
-store in tls.crt tls.key
+store in tls.cert tls.key
 
 kubectl create secret tls chart-kadira-tls --cert=./tls.cert --key=./tls.key
 
@@ -18,13 +18,21 @@ helm upgrade my-release
 
 
 
-helm install --name my-kadira kadira
-helm del --purge my-kadira 
-helm upgrade my-kadira kadira
+helm install --name my-release incubator/kadira -f myvalues.yaml
+helm del --purge my-release 
+helm upgrade my-release incubator/kadira
+helm upgrade my-kadira incubator/kadira -f myvalues.yaml
 
-kubectl describe ing my-kadira-ui
+kubectl describe ing my-release-ui
 
 ```
+
+create myvalues.yaml file
+
+default login
+admin@gmail.com admin
+
+
 
 
 # Kadira
@@ -127,3 +135,9 @@ $ helm install --name my-release -f values.yaml incubator/kadira
 ```
 
 > **Tip**: You can use the default [values.yaml](values.yaml)
+
+### Upgrading Your App’s Plan
+To get the full potential of Kadira, we’re going to upgrade our app to the paid “Business” plan of Kadira.
+Log into your Compose account and go to the apps collection inside of your kadira-apps database. Find your app by the appId.
+Change the plan key value from “free” to “business” and the pricingType key value from “free” to “paid”.
+https://www.gethappyboards.com/2017/07/rolling-out-your-own-instance-of-kadira/

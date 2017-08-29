@@ -43,7 +43,7 @@ spec:
       - env:
         - name: MONGO_URL
           value: {{ default "" .Values.Rma.mongoUrl | quote }}
-        image: "{{ .Values.Rma.Image }}:{{ .Values.Rma.imageTag }}"
+        image: "{{ .Values.Rma.image }}:{{ .Values.Rma.imageTag }}"
         name: {{ template "rma-fullname" . }}
         resources: {}
       restartPolicy: Always

@@ -50,7 +50,7 @@ spec:
           value: {{ default "" .Values.Engine.mongoUrl | quote }}
         - name: PORT
           value: "{{ .Values.Engine.containerPort }}"
-        image: "{{ .Values.Engine.Image }}:{{ .Values.Engine.imageTag }}"
+        image: "{{ .Values.Engine.image }}:{{ .Values.Engine.imageTag }}"
         name: {{ template "engine-fullname" . }}
         ports:
         - containerPort: {{ .Values.Engine.containerPort }}
